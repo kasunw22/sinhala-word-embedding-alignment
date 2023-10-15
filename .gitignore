@@ -1,3 +1,5 @@
+# local pycharm settings and preferences
+.idea/
 # MUSE data and result folders
 
 MUSE/data/crosslingual/

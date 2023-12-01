@@ -6,8 +6,10 @@
 # LICENSE file in the root directory of this source tree.
 
 import io
+import pickle
 import numpy as np
 import collections
+from sinling import word_splitter
 
 
 def load_vectors(fname, maxload=200000, norm=True, center=False, verbose=True):
@@ -62,6 +64,17 @@ def idx(words):
         if w not in w2i:
             w2i[w] = i
     return w2i
+
+
+def wi(words):
+    w2i = {}
+    i2w = {}
+    for i, w in enumerate(words):
+        if w not in w2i:
+            w2i[w] = i
+            i2w[i] = w
+
+    return w2i, i2w
 
 
 def save_vectors(fname, x, words):
@@ -127,7 +140,6 @@ def load_pairs(filename, idx_src, idx_tgt, verbose=True):
             l_split = line.rstrip().split('\t')
             a, b = l_split[0], " ".join(l_split[1:])
         tot += 1
-        #print(f"{a=}-{b=}")
         if a in idx_src and b in idx_tgt:
             pairs.append((idx_src[a], idx_tgt[b]))
     if verbose:
@@ -136,7 +148,74 @@ def load_pairs(filename, idx_src, idx_tgt, verbose=True):
     return pairs
 
 
-def compute_nn_accuracy(x_src, x_tgt, lexicon, bsz=100, lexicon_size=-1, top_k=1, norm=False, norm_src_only=False):  # use norm=False if vectors are already normalized
+def lematized_match(ref, pred, w2i_tgt, i2w_tgt, si_splits, si_splits_file_path):
+    # ref = lexicon[idx_src[j]]
+    # pred = pred[j - i]
+
+    if not isinstance(ref, list):
+        ref = list(ref)
+
+    if not isinstance(pred, list):
+        pred = list(pred)
+
+    # any(one_top_k in list(lexicon[idx_src[j]]) for one_top_k in pred[j - i])
+
+    split_ref = []
+
+    for x in ref:
+
+      if x in si_splits:
+        split_ref.append(si_splits[x])
+      else:
+        try:
+          split = word_splitter.split(i2w_tgt[x])['base']
+        except:
+          continue
+
+        try:
+          split = w2i_tgt[split]
+        except:
+          ...
+
+        split_ref.append(split)
+        si_splits[x] = split
+
+        with open(si_splits_file_path, 'wb') as f:
+            pickle.dump(si_splits, f)
+
+    split_pred = []
+
+    for y in pred:
+
+      x = y.item()
+
+      if x in si_splits:
+        split_pred.append(si_splits[x])
+      else:
+        try:
+          split = word_splitter.split(i2w_tgt[x])['base']
+        except:
+          continue
+
+        try:
+          split = w2i_tgt[split]
+        except:
+          ...
+
+        split_pred.append(split)
+        si_splits[x] = split
+
+        with open(si_splits_file_path, 'wb') as f:
+            pickle.dump(si_splits, f)
+
+    split_ref = ref + split_ref
+    split_pred = pred + split_pred
+
+    return any(one_top_k in split_ref for one_top_k in split_pred)
+
+
+def compute_nn_accuracy(x_src, x_tgt, lexicon, bsz=100, lexicon_size=-1, top_k=1, norm=False, norm_src_only=False, \
+    do_lemmatized_match=False, w2i_tgt=None, i2w_tgt=None, si_splits=None, si_splits_file_path=None):  # use norm=False if vectors are already normalized
     if lexicon_size < 0:
         lexicon_size = len(lexicon)
 
@@ -164,11 +243,15 @@ def compute_nn_accuracy(x_src, x_tgt, lexicon, bsz=100, lexicon_size=-1, top_k=1
         
             if any(one_top_k in lexicon[idx_src[j]] for one_top_k in pred[j - i]):
                 acc += 1.0
+
+            elif do_lemmatized_match and lematized_match(ref=list(lexicon[idx_src[j]]), pred=pred[j - i], w2i_tgt=w2i_tgt, i2w_tgt=i2w_tgt, si_splits=si_splits, si_splits_file_path=si_splits_file_path):
+                acc += 1.0
     
     return acc / lexicon_size
 
 
-def compute_csls_accuracy(x_src, x_tgt, lexicon, lexicon_size=-1, k=10, bsz=1024, top_k=1, norm=False, norm_src_only=False):
+def compute_csls_accuracy(x_src, x_tgt, lexicon, lexicon_size=-1, k=10, bsz=1024, top_k=1, norm=False, norm_src_only=False, \
+    do_lemmatized_match=False, w2i_tgt=None, i2w_tgt=None, si_splits=None, si_splits_file_path=None):
     if lexicon_size < 0:
         lexicon_size = len(lexicon)
 
@@ -205,6 +288,9 @@ def compute_csls_accuracy(x_src, x_tgt, lexicon, lexicon_size=-1, k=10, bsz=1024
     
         # if nn[k] in lexicon[idx_src[k]]:
         if any(one_top_k in lexicon[idx_src[k]] for one_top_k in nn[k]):
+            correct += 1.0
+
+        elif do_lemmatized_match and lematized_match(ref=list(lexicon[idx_src[k]]), pred=nn[k], w2i_tgt=w2i_tgt, i2w_tgt=i2w_tgt, si_splits=si_splits, si_splits_file_path=si_splits_file_path):
             correct += 1.0
     
     return correct / lexicon_size

@@ -127,9 +127,10 @@ def proj_spectral(R):
 
 
 def load_transform(fname, d1=300, d2=300):
-    print("Loading the alignment/transformation matrix...")
+    #print("Loading the alignment/transformation matrix...")
     fin = io.open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
-    
+    print("Loading the alignment/transformation matrix...")
+
     try:
         d1, d2 = map(int, fin.readline().split())
     except:
@@ -147,11 +148,11 @@ def load_transform(fname, d1=300, d2=300):
 # load word embeddings
 words_tgt, x_tgt = load_vectors(params.tgt_emb, maxload=params.maxload, center=params.center, norm=True)
 words_src, x_src = load_vectors(params.src_emb, maxload=params.maxload, center=params.center, norm=True)
-
+#print(len(words_src), len(x_src), '==================')
 # load validation bilingual lexicon
 src2tgt, lexicon_size = load_lexicon(params.dico_test, words_src, words_tgt)
 train_src2tgt, train_lexicon_size = load_lexicon(params.dico_train, words_src, words_tgt)
-
+#print(len(train_src2tgt), len(src2tgt), train_src2tgt, src2tgt, '***=============')
 # word --> vector indices
 idx_src = idx(words_src)
 idx_tgt = idx(words_tgt)
@@ -173,9 +174,10 @@ resumed = False
 # initialization:
 if params.src_mat != "":
     try:
-        print("[RESUMING] Appliying given alignment to the src embeddings")
+        #print("[RESUMING] Appliying given alignment to the src embeddings")
         R = load_transform(params.src_mat)
         resumed = True
+        print("[RESUMING] Appliying given alignment to the src embeddings")
     except:
         R = procrustes(X_src, Y_tgt)
     #print("[RESUMING] Appliying given alignment to the src embeddings")

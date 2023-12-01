@@ -8,9 +8,10 @@
 # LICENSE file in the root directory of this source tree.
 
 import io
+import os
 import numpy as np
 import argparse
-from utils_si import *
+from utils_si_new import *
 
 parser = argparse.ArgumentParser(description='Evaluation of word alignment')
 parser.add_argument("--src_emb", type=str, default='', help="Load source embeddings")
@@ -22,6 +23,9 @@ parser.add_argument("--dico_test", type=str, default='', help="test dictionary")
 parser.add_argument("--top_k", type=int, default=10, help="top-k value for accuracy evaluations")
 parser.add_argument("--maxload", type=int, default=200000)
 parser.add_argument("--nomatch", action='store_true', help="no exact match in lexicon")
+parser.add_argument("--do_lemmatized_match", action='store_true', help="perform lemmetized match for non matching pairs")
+parser.add_argument("--si_splits", type=str, default='', help="path to Si lamitized data file")
+
 params = parser.parse_args()
 
 
@@ -61,10 +65,28 @@ if params.src_mat != "":
     # x_src = np.dot(x_src, R_src)  # for babylone
     x_src = np.dot(x_src, R_src.T)  # for this repo
 
+##### setup lamitized matching
+si_splits_file_path = params.si_splits
+
+if params.do_lemmatized_match:
+    if not os.path.exists(si_splits_file_path):
+        with open(si_splits_file_path, 'wb') as f:
+            pickle.dump({}, f)
+
+        si_splits = {}
+
+    else:
+        with open(si_splits_file_path, 'rb') as f:
+            si_splits = pickle.load(f)
+else:
+    si_splits = {}
+##### setup lamitized matching
+
 src2tgt, lexicon_size = load_lexicon(params.dico_test, words_src, words_tgt)
+(w2i_src, i2w_src) , (w2i_tgt, i2w_tgt) = wi(words_src), wi(words_tgt)
 
 # nnacc = compute_nn_accuracy(x_src, x_tgt, src2tgt, lexicon_size=lexicon_size)
 # cslsproc = compute_csls_accuracy(x_src, x_tgt, src2tgt, lexicon_size=lexicon_size)
-nnacc = compute_nn_accuracy(x_src, x_tgt, src2tgt, lexicon_size=-1, top_k=params.top_k)
-cslsproc = compute_csls_accuracy(x_src, x_tgt, src2tgt, lexicon_size=-1, top_k=params.top_k)
+nnacc = compute_nn_accuracy(x_src, x_tgt, src2tgt, lexicon_size=-1, top_k=params.top_k, w2i_tgt=w2i_tgt, i2w_tgt=i2w_tgt, do_lemmatized_match=params.do_lemmatized_match, si_splits=si_splits, si_splits_file_path=si_splits_file_path)
+cslsproc = compute_csls_accuracy(x_src, x_tgt, src2tgt, lexicon_size=-1, top_k=params.top_k, w2i_tgt=w2i_tgt, i2w_tgt=i2w_tgt, do_lemmatized_match=params.do_lemmatized_match, si_splits=si_splits, si_splits_file_path=si_splits_file_path)
 print("NN = %.4f - CSLS = %.4f - Coverage = %.4f" % (nnacc, cslsproc, len(src2tgt) / lexicon_size))

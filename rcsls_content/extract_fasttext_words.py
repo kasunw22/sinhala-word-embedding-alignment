@@ -1,4 +1,4 @@
-import io
+from utils_si import *
 
 
 def extract_words(fname, out_fo, start=0, last=None, verbose=True):
@@ -29,9 +29,9 @@ def extract_words(fname, out_fo, start=0, last=None, verbose=True):
         print("Writing done")
 
 
-# model_name = "data/cc.si.300.vec"
-#model_name = "data/cc.en.300.vec"
-model_name = "data/wiki.en.vec"
+#model_name = "data/cc.si.300.vec"
+model_name = "data/cc.en.300.vec"
+#model_name = "data/wiki.en.vec"
 #model_name = "data/wiki.si.vec"
 
 f = open(f"{model_name}_words.txt", "w")

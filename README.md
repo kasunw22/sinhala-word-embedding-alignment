@@ -30,7 +30,7 @@ If you are willing to use this work, please be kind enough to cite the following
 }
 ```
 
-### [Word Embedding Alignment paper](https://arxiv.org/abs/2308.02234): 
+### [Word Embedding Alignment paper](https://arxiv.org/abs/2311.10436): 
 ```
 @article{wickramasinghe2023sinhala,
   title={Sinhala-English Word Embedding Alignment: Introducing Datasets and Benchmark for a Low Resource Language},

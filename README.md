@@ -32,10 +32,10 @@ If you are willing to use this work, please be kind enough to cite the following
 
 ### [Word Embedding Alignment paper](https://arxiv.org/abs/2308.02234): 
 ```
-@article{xxxxxx,
+@article{wickramasinghe2023sinhala,
   title={Sinhala-English Word Embedding Alignment: Introducing Datasets and Benchmark for a Low Resource Language},
   author={Wickramasinghe, Kasun and de Silva, Nisansa},
-  journal={xxxxx},
+  journal={arXiv preprint arXiv:2311.10436},
   year={2023}
 }
 ```

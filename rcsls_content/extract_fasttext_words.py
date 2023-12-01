@@ -1,4 +1,4 @@
-from utils_si import *
+import io
 
 
 def extract_words(fname, out_fo, start=0, last=None, verbose=True):

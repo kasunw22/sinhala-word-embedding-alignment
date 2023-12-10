@@ -10,9 +10,23 @@ import numpy as np
 import collections
 
 
-def load_vectors(fname, maxload=200000, norm=True, center=False, verbose=True):
+prunables = ["si", "zh", "ru", "ta", "ja"]
+
+def not_ASCII(word):
+    is_ascii = [ord(x)<256 for x in word]
+
+    if all(is_ascii):
+        return False
+
+    return True
+
+
+def load_vectors(fname, maxload=200000, norm=True, center=False, verbose=True, prune_ascii=True):
+    lang = fname.rsplit('/', 1)[-1].split('.')[1]
+    
     if verbose:
-        print("Loading vectors from %s" % fname)
+        print("Loading vectors from %s (%s)" % (fname, lang))
+    
     fin = io.open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
     n, d = map(int, fin.readline().split())
     if maxload > 0:
@@ -27,6 +41,16 @@ def load_vectors(fname, maxload=200000, norm=True, center=False, verbose=True):
         v = np.array(tokens[1:], dtype=float)
         x[i, :] = v
 
+    print(f"[INFO] Original embeddings size: {x.shape}")
+    
+    if prune_ascii and lang in prunables:
+        print("[INFO] Pruning the vocabulary by removing ASCII entries...")
+        prune_idx = list(map(not_ASCII, words))
+        x = x[prune_idx]
+        words = list(np.array(words)[prune_idx])
+
+        print(f"[INFO] After pruning embeddings size: {x.shape}")
+    
     # if center:
     #     print("Centering and Normalizing the vectors...")
     #     # x -= x.mean(axis=0)[np.newaxis, :]

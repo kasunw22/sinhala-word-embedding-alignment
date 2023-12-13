@@ -123,7 +123,7 @@ def select_vectors_from_pairs(x_src, y_tgt, pairs):
     return x, y
 
 
-def load_lexicon(filename, words_src, words_tgt, verbose=True):
+def load_lexicon_old(filename, words_src, words_tgt, verbose=True):
     f = io.open(filename, 'r', encoding='utf-8')
     lexicon = collections.defaultdict(set)
     idx_src , idx_tgt = idx(words_src), idx(words_tgt)
@@ -131,6 +131,28 @@ def load_lexicon(filename, words_src, words_tgt, verbose=True):
     for line in f:
         l_split = line.split()
         word_src, word_tgt = l_split[0], " ".join(l_split[1:])
+        if word_src in idx_src and word_tgt in idx_tgt:
+            lexicon[idx_src[word_src]].add(idx_tgt[word_tgt])
+        vocab.add(word_src)
+    if verbose:
+        coverage = len(lexicon) / float(len(vocab))
+        print("Coverage of source vocab: %.4f" % (coverage))
+    return lexicon, float(len(vocab))
+
+
+def load_lexicon(filename, words_src, words_tgt, verbose=True):
+    f = io.open(filename, 'r', encoding='utf-8')
+    lexicon = collections.defaultdict(set)
+    idx_src , idx_tgt = idx(words_src), idx(words_tgt)
+    vocab = set()
+    for line in f:
+        l_split = line.rstrip().split(' ')
+        word_src, word_tgt = l_split[0], " ".join(l_split[1:])
+        
+        if not word_tgt:
+            l_split = line.rstrip().split('\t')
+            word_src, word_tgt = l_split[0], " ".join(l_split[1:])
+            
         if word_src in idx_src and word_tgt in idx_tgt:
             lexicon[idx_src[word_src]].add(idx_tgt[word_tgt])
         vocab.add(word_src)

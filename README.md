@@ -17,25 +17,47 @@ This repository contains the resources related to our research on English-Sinhal
 ![Model](./alignment-results-comparison.png)
 
 
-## BibTex Citation
+## Publications
 If you are willing to use this work, please be kind enough to cite the following papers.
 
 ### [Dataset paper](https://arxiv.org/abs/2308.02234):
+
 ```
-@article{wickramasinghe2023sinhala,
-  title={Sinhala-English Parallel Word Dictionary Dataset},
-  author={Wickramasinghe, Kasun and de Silva, Nisansa},
-  journal={arXiv preprint arXiv:2308.02234},
-  year={2023}
-}
+@INPROCEEDINGS{10253560,
+  author={Wickramasinghe, Kasun and De Silva, Nisansa},
+  booktitle={2023 IEEE 17th International Conference on Industrial and Information Systems (ICIIS)}, 
+  title={Sinhala-English Parallel Word Dictionary Dataset}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={61-66},
+  keywords={Dictionaries;Annotations;Pipelines;Machine translation;Task analysis;Information systems;parallel corpus;alignment;English-Sinhala dictionary;word embedding alignment;lexicon induction},
+  doi={10.1109/ICIIS58898.2023.10253560}}
 ```
 
-### [Word Embedding Alignment paper](https://arxiv.org/abs/2311.10436): 
+### [Word Embedding Alignment paper](https://aclanthology.org/2023.paclic-1.42/): 
 ```
-@article{wickramasinghe2023sinhala,
-  title={Sinhala-English Word Embedding Alignment: Introducing Datasets and Benchmark for a Low Resource Language},
-  author={Wickramasinghe, Kasun and de Silva, Nisansa},
-  journal={arXiv preprint arXiv:2311.10436},
-  year={2023}
+@inproceedings{wickramasinghe-de-silva-2023-sinhala,
+    title = "{S}inhala-{E}nglish Word Embedding Alignment: Introducing Datasets and Benchmark for a Low Resource Language",
+    author = "Wickramasinghe, Kasun  and
+      de Silva, Nisansa",
+    editor = "Huang, Chu-Ren  and
+      Harada, Yasunari  and
+      Kim, Jong-Bok  and
+      Chen, Si  and
+      Hsu, Yu-Yin  and
+      Chersoni, Emmanuele  and
+      A, Pranav  and
+      Zeng, Winnie Huiheng  and
+      Peng, Bo  and
+      Li, Yuxi  and
+      Li, Junlin",
+    booktitle = "Proceedings of the 37th Pacific Asia Conference on Language, Information and Computation",
+    month = dec,
+    year = "2023",
+    address = "Hong Kong, China",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.paclic-1.42",
+    pages = "424--435",
 }
 ```

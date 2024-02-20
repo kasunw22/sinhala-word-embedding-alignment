@@ -59,6 +59,7 @@ def main():
     parser.add_argument('--precision', choices=['fp16', 'fp32', 'fp64'], default='fp32', help='the floating-point precision (defaults to fp32)')
     parser.add_argument('--cuda', action='store_true', help='use cuda (requires cupy)')
     parser.add_argument('--prune_ascii', action='store_true', help='Remove ASCII entries from Non-English alphebets')
+    parser.add_argument('-n', '--top_k', default=1, type=int, help='top-k predictions to be checked in retrieval')
     args = parser.parse_args()
 
     # Choose the right dtype for the desired precision
@@ -76,6 +77,8 @@ def main():
     #trg_words, z = embeddings.read(trgfile, dtype=dtype)
     src_words, x = embeddings.read(args.src_embeddings, dtype=dtype, encoding=args.encoding, prune_ascii=args.prune_ascii)
     trg_words, z = embeddings.read(args.trg_embeddings, dtype=dtype, encoding=args.encoding, prune_ascii=args.prune_ascii)
+
+    print("[INFO] Evaluating....")
 
     # NumPy/CuPy management
     if args.cuda:
@@ -115,16 +118,21 @@ def main():
     src = list(src2trg.keys())
     oov -= vocab  # If one of the translation options is in the vocabulary, then the entry is not an oov
     coverage = len(src2trg) / (len(src2trg) + len(oov))
-
+    print(f"[INFO] Dataset Coverage: {coverage * 100} %")
+    
     # Find translations
     translation = collections.defaultdict(int)
     if args.retrieval == 'nn':  # Standard nearest neighbor
         for i in range(0, len(src), BATCH_SIZE):
             j = min(i + BATCH_SIZE, len(src))
             similarities = x[src[i:j]].dot(z.T)
-            nn = similarities.argmax(axis=1).tolist()
+            ####
+            # nn = similarities.argmax(axis=1).tolist()
+            nn = xp.flip(similarities.argsort(axis=1)[:, -args.top_k:], axis=1).tolist()
             for k in range(j-i):
                 translation[src[i+k]] = nn[k]
+            ####
+                
     elif args.retrieval == 'invnn':  # Inverted nearest neighbor
         best_rank = np.full(len(src), x.shape[0], dtype=int)
         best_sim = np.full(len(src), -100, dtype=dtype)
@@ -151,7 +159,8 @@ def main():
         for i in range(0, len(src), BATCH_SIZE):
             j = min(i + BATCH_SIZE, len(src))
             p = xp.exp(args.inv_temperature*x[src[i:j]].dot(z.T)) / partition
-            nn = p.argmax(axis=1).tolist()
+            # nn = p.argmax(axis=1).tolist()
+            nn = xp.flip(p.argsort(axis=1)[:, -args.top_k:], axis=1).tolist()
             for k in range(j-i):
                 translation[src[i+k]] = nn[k]
     elif args.retrieval == 'csls':  # Cross-domain similarity local scaling
@@ -162,12 +171,35 @@ def main():
         for i in range(0, len(src), BATCH_SIZE):
             j = min(i + BATCH_SIZE, len(src))
             similarities = 2*x[src[i:j]].dot(z.T) - knn_sim_bwd  # Equivalent to the real CSLS scores for NN
-            nn = similarities.argmax(axis=1).tolist()
+            # nn = similarities.argmax(axis=1).tolist()
+            nn = xp.flip(similarities.argsort(axis=1)[:, -args.top_k:], axis=1).tolist()
             for k in range(j-i):
                 translation[src[i+k]] = nn[k]
 
-    # Compute accuracy
-    accuracy = np.mean([1 if translation[i] in src2trg[i] else 0 for i in src])
+    # Compute accuracy - original way
+    # accuracy = np.mean([1 if translation[i] in src2trg[i] else 0 for i in src])
+    
+    ####### modified way for top-k
+    scores = []
+    for i in src:
+        if isinstance(translation[i], str):
+            if translation[i] in src2trg[i]:
+                scores.append(1)
+            else:
+                scores.append(0)
+        else:
+            if any(one_top_k in src2trg[i] for one_top_k in translation[i]):
+                scores.append(1)
+            else:
+                scores.append(0)
+    
+    accuracy = np.mean(scores)
+    
+    # for j in range(i, e):
+    #     if any(one_top_k in lexicon[idx_src[j]] for one_top_k in pred[j - i]):
+    #         acc += 1.0
+    #######
+    
     print('Coverage:{0:7.2%}  Accuracy:{1:7.2%}'.format(coverage, accuracy))
 
 

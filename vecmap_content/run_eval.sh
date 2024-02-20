@@ -87,9 +87,18 @@ echo "[INFO] tgt embeddings: ${src_emb_mapped}"
 
 echo "[INFO] Evaluating the aligned embeddings using BLI ${s} --> ${t} ${retrieval} retrieval"
 
-if [ $prune_ascii == "True" ]; then
-  python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --prune_ascii
-else
-  python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval}
-fi
+topks=(1 5 10)
+for topk in "${topks[@]}"
+do
+  echo "Evaluating for top_k: ${topk} ...."
+
+  if [ $prune_ascii == "True" ]; then
+    python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --top_k ${topk} --prune_ascii
+  else
+    python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --top_k ${topk}
+  fi
+
+  echo "Done top_k: ${topk} ================================================"
+
+done # end of for-loop
 

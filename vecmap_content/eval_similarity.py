@@ -64,10 +64,12 @@ def main():
     trg_vocab = {pair[1] for pairs in word_pairs for pair in pairs}
 
     # Read embeddings
-    srcfile = open(args.src_embeddings, encoding=args.encoding, errors='surrogateescape')
-    trgfile = open(args.src_embeddings if args.trg_embeddings is None else args.trg_embeddings, encoding=args.encoding, errors='surrogateescape')
-    src_words, src_matrix = embeddings.read(srcfile, vocabulary=src_vocab, dtype=dtype)
-    trg_words, trg_matrix = embeddings.read(trgfile, vocabulary=trg_vocab, dtype=dtype)
+    #srcfile = open(args.src_embeddings, encoding=args.encoding, errors='surrogateescape')
+    #trgfile = open(args.src_embeddings if args.trg_embeddings is None else args.trg_embeddings, encoding=args.encoding, errors='surrogateescape')
+    #src_words, src_matrix = embeddings.read(srcfile, vocabulary=src_vocab, dtype=dtype)
+    #trg_words, trg_matrix = embeddings.read(trgfile, vocabulary=trg_vocab, dtype=dtype)
+    src_words, src_matrix = embeddings.read(args.src_embeddings, dtype=dtype, encoding=args.encoding)
+    trg_words, trg_matrix = embeddings.read(args.src_embeddings if args.trg_embeddings is None else args.trg_embeddings, dtype=dtype, encoding=args.encoding)
 
     # Length normalize embeddings so their dot product effectively computes the cosine similarity
     embeddings.length_normalize(src_matrix)

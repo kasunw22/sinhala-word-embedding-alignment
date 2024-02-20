@@ -146,6 +146,7 @@ def load_lexicon(filename, words_src, words_tgt, verbose=True):
     idx_src , idx_tgt = idx(words_src), idx(words_tgt)
     vocab = set()
     for line in f:
+        line = " ".join(line.split())
         l_split = line.rstrip().split(' ')
         word_src, word_tgt = l_split[0], " ".join(l_split[1:])
         
@@ -167,6 +168,7 @@ def load_pairs(filename, idx_src, idx_tgt, verbose=True):
     pairs = []
     tot = 0
     for line in f:
+        line = " ".join(line.split())
         l_split = line.rstrip().split(' ')
         a, b = l_split[0], " ".join(l_split[1:])
         if not b:

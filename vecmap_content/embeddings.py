@@ -18,7 +18,22 @@ from cupy_utils import *
 import numpy as np
 
 
-def read(file, threshold=0, vocabulary=None, dtype='float'):
+prunables = ["si", "zh", "ru", "ta", "ja"]
+
+def not_ASCII(word):
+    is_ascii = [ord(x)<256 for x in word]
+
+    if all(is_ascii):
+        return False
+
+    return True
+
+
+def read(file_path, threshold=200_000, vocabulary=None, dtype='float', prune_ascii=False, encoding='utf-8'):
+    lang = file_path.rsplit('/', 1)[-1].split('.')[1]    
+    print("Loading vectors from %s (%s)" % (file_path, lang))
+
+    file = open(file_path, encoding=encoding, errors='surrogateescape')
     header = file.readline().split(' ')
     count = int(header[0]) if threshold <= 0 else min(threshold, int(header[0]))
     dim = int(header[1])
@@ -32,6 +47,18 @@ def read(file, threshold=0, vocabulary=None, dtype='float'):
         elif word in vocabulary:
             words.append(word)
             matrix.append(np.fromstring(vec, sep=' ', dtype=dtype))
+    #print(f"[INFO] Loaded {len(words)} word vectors...")
+
+    print(f"[INFO] Original embeddings size: {matrix.shape}")
+    
+    if prune_ascii and lang in prunables:
+        print("[INFO] Pruning the vocabulary by removing ASCII entries...")
+        prune_idx = list(map(not_ASCII, words))
+        matrix = matrix[prune_idx]
+        words = list(np.array(words)[prune_idx])
+
+        print(f"[INFO] After pruning embeddings size: {matrix.shape}")
+
     return (words, matrix) if vocabulary is None else (words, np.array(matrix, dtype=dtype))
 
 

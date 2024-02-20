@@ -44,8 +44,9 @@ def main():
         dtype = 'float64'
 
     # Read input embeddings
-    f = open(args.embeddings, encoding=args.encoding, errors='surrogateescape')
-    words, matrix = embeddings.read(f, threshold=args.threshold, dtype=dtype)
+    #f = open(args.embeddings, encoding=args.encoding, errors='surrogateescape')
+    #words, matrix = embeddings.read(f, threshold=args.threshold, dtype=dtype)
+    words, matrix = embeddings.read(args.embeddings, threshold=args.threshold, dtype=dtype, encoding=args.encoding)
 
     # Build word to index map
     word2ind = {word: i for i, word in enumerate(words)}

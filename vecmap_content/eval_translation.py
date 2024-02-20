@@ -58,6 +58,7 @@ def main():
     parser.add_argument('--seed', type=int, default=0, help='the random seed')
     parser.add_argument('--precision', choices=['fp16', 'fp32', 'fp64'], default='fp32', help='the floating-point precision (defaults to fp32)')
     parser.add_argument('--cuda', action='store_true', help='use cuda (requires cupy)')
+    parser.add_argument('--prune_ascii', action='store_true', help='Remove ASCII entries from Non-English alphebets')
     args = parser.parse_args()
 
     # Choose the right dtype for the desired precision
@@ -69,10 +70,12 @@ def main():
         dtype = 'float64'
 
     # Read input embeddings
-    srcfile = open(args.src_embeddings, encoding=args.encoding, errors='surrogateescape')
-    trgfile = open(args.trg_embeddings, encoding=args.encoding, errors='surrogateescape')
-    src_words, x = embeddings.read(srcfile, dtype=dtype)
-    trg_words, z = embeddings.read(trgfile, dtype=dtype)
+    #srcfile = open(args.src_embeddings, encoding=args.encoding, errors='surrogateescape')
+    #trgfile = open(args.trg_embeddings, encoding=args.encoding, errors='surrogateescape')
+    #src_words, x = embeddings.read(srcfile, dtype=dtype)
+    #trg_words, z = embeddings.read(trgfile, dtype=dtype)
+    src_words, x = embeddings.read(args.src_embeddings, dtype=dtype, encoding=args.encoding, prune_ascii=args.prune_ascii)
+    trg_words, z = embeddings.read(args.trg_embeddings, dtype=dtype, encoding=args.encoding, prune_ascii=args.prune_ascii)
 
     # NumPy/CuPy management
     if args.cuda:

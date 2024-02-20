@@ -142,10 +142,12 @@ def main():
         dtype = 'float64'
 
     # Read input embeddings
-    srcfile = open(args.src_input, encoding=args.encoding, errors='surrogateescape')
-    trgfile = open(args.trg_input, encoding=args.encoding, errors='surrogateescape')
-    src_words, x = embeddings.read(srcfile, dtype=dtype)
-    trg_words, z = embeddings.read(trgfile, dtype=dtype)
+    #srcfile = open(args.src_input, encoding=args.encoding, errors='surrogateescape')
+    #trgfile = open(args.trg_input, encoding=args.encoding, errors='surrogateescape')
+    #src_words, x = embeddings.read(srcfile, dtype=dtype)
+    #trg_words, z = embeddings.read(trgfile, dtype=dtype)
+    src_words, x = embeddings.read(args.src_input, dtype=dtype, encoding=args.encoding)
+    trg_words, z = embeddings.read(args.trg_input, dtype=dtype, encoding=args.encoding)
 
     # NumPy/CuPy management
     if args.cuda:

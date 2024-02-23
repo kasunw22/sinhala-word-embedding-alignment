@@ -1,18 +1,24 @@
 #binn/bash
 
-s=${1:-en}
+#s=${1:-en}
 #s=${1:-fr}
 #s=${1:-si}
 #s=${1:-ta}
 #s=${1:-es}
 #s=${1:-tr}
+#s=${1:-it}
+#s=${1:-de}
+s=${1:-ru}
 
-#t=${2:-en}
+t=${2:-en}
+#t=${2:-it}
 #t=${2:-es}
-t=${2:-tr}
+#t=${2:-tr}
 #t=${2:-fr}
 #t=${2:-si}
 #t=${2:-ta}
+#t=${2:-de}
+#t=${2:-ru}
 
 base="wiki"
 #base="cc"
@@ -20,7 +26,8 @@ base="wiki"
 #retrieval="nn"
 #retrieval="invnn"
 #retrieval="invsoftmax"
-retrieval="csls"
+#retrieval="csls"
+retrieval="csls_nn"
 
 # aligned embeddings in src --> tgt is used to evaluate tgt --> src as well. 
 # set swap_embed_src_tgt_names=True if aligned embeddings are created using src --> tgt but evaluating in tgt --> src direction
@@ -93,12 +100,27 @@ do
   echo "Evaluating for top_k: ${topk} ...."
 
   if [ $prune_ascii == "True" ]; then
-    python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --top_k ${topk} --prune_ascii
+    if [ $retrieval == "csls_nn" ]; then
+	echo "NN Retrieval:"
+	python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval "nn" --top_k ${topk} --prune_ascii
+	echo "CSLS Retrieval"
+	python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval "csls" --top_k ${topk} --prune_ascii
+    else
+	python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --top_k ${topk} --prune_ascii
+    fi
   else
-    python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --top_k ${topk}
+    if [ $retrieval == "csls_nn" ]; then
+	echo "NN Retrieval:"
+	python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval "nn" --top_k ${topk}
+	echo "CSLS Retrieval"
+        python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval "csls" --top_k ${topk}
+    else
+        python eval_translation.py ${src_emb_mapped} ${tgt_emb_mapped} -d ${dico_test} --retrieval ${retrieval} --top_k ${topk}
+    fi
   fi
 
   echo "Done top_k: ${topk} ================================================"
 
 done # end of for-loop
+
 

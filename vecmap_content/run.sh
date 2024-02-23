@@ -8,7 +8,10 @@ s=${1:-en}
 #t=${2:-en}
 #t=${2:-fr}
 #t=${2:-es}
-t=${2:-tr}
+#t=${2:-tr}
+#t=${2:-it}
+#t=${2:-de}
+t=${2:-ru}
 
 base="wiki"
 #base="cc"

@@ -46,6 +46,9 @@ lang_pairs = [('en', 'tr'), ('tr', 'en')]
 base = "wiki"
 #base = "cc"
 
+#ASCII_PRUNE_VOCAB = True
+ASCII_PRUNE_VOCAB = False
+
 for (lang1, lang2) in lang_pairs:
     print(lang1, lang2)
     sys.stdout.flush()
@@ -61,4 +64,7 @@ for (lang1, lang2) in lang_pairs:
         TEST_DICT = os.path.join(DATA_DIR, f"{lang1}-{lang2}.5000-6500.txt")
 
     for top_k in [1, 5, 10]:
-      os.system('CUDA_VISIBLE_DEVICES=0  python evaluate_c1.py --l1 {} --l2 {} --root {} --train_dict_dir {} --test_dict_dir {} --top_k {}'.format(lang1, lang2, ROOT_DIR, TRAIN_DICT, TEST_DICT, top_k))
+        if ASCII_PRUNE_VOCAB:
+            os.system('CUDA_VISIBLE_DEVICES=0  python evaluate_c1.py --l1 {} --l2 {} --root {} --train_dict_dir {} --test_dict_dir {} --top_k {} --prune_ascii'.format(lang1, lang2, ROOT_DIR, TRAIN_DICT, TEST_DICT, top_k))
+        else:
+            os.system('CUDA_VISIBLE_DEVICES=0  python evaluate_c1.py --l1 {} --l2 {} --root {} --train_dict_dir {} --test_dict_dir {} --top_k {}'.format(lang1, lang2, ROOT_DIR, TRAIN_DICT, TEST_DICT, top_k))

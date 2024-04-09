@@ -86,6 +86,9 @@ neg_max = 60000
 lambda_ = 0.2
 output_dir_postfix = ""
 
+#ASCII_PRUNE_VOCAB = True
+ASCII_PRUNE_VOCAB = False
+
 assert agg_mode in ["cls", "mean_pool", "pooler"]
 
 for (lang1, lang2) in lang_pairs:
@@ -147,5 +150,8 @@ for (lang1, lang2) in lang_pairs:
     if EVALUATE:
       print("EVALUATION")
       sys.stdout.flush() 
-      os.system("CUDA_VISIBLE_DEVICES={} python evaluate_bli_procrustes.py --l1 {} --l2 {} --train_size {} --root {} --model_name {} --agg_mode {} --template {} --max_length {} --l1_voc {} --l1_emb {} --l2_voc {} --l2_emb {} --train_dict_dir {} --test_dict_dir {} --lambda_ {} --origin_model_name {} --top_k 1,5,10".format(gpuid, lang1, lang2, train_size, DIR_NEW, output_dir, agg_mode, template, max_length,l1_voc, l1_emb, l2_voc, l2_emb, DIR_TRAIN_DICT, DIR_TEST_DICT, lambda_, model_dir))
+      if ASCII_PRUNE_VOCAB:
+        os.system("CUDA_VISIBLE_DEVICES={} python evaluate_bli_procrustes.py --l1 {} --l2 {} --train_size {} --root {} --model_name {} --agg_mode {} --template {} --max_length {} --l1_voc {} --l1_emb {} --l2_voc {} --l2_emb {} --train_dict_dir {} --test_dict_dir {} --lambda_ {} --origin_model_name {} --top_k 1,5,10 --prune_ascii".format(gpuid, lang1, lang2, train_size, DIR_NEW, output_dir, agg_mode, template, max_length,l1_voc, l1_emb, l2_voc, l2_emb, DIR_TRAIN_DICT, DIR_TEST_DICT, lambda_, model_dir))
+      else:  
+        os.system("CUDA_VISIBLE_DEVICES={} python evaluate_bli_procrustes.py --l1 {} --l2 {} --train_size {} --root {} --model_name {} --agg_mode {} --template {} --max_length {} --l1_voc {} --l1_emb {} --l2_voc {} --l2_emb {} --train_dict_dir {} --test_dict_dir {} --lambda_ {} --origin_model_name {} --top_k 1,5,10".format(gpuid, lang1, lang2, train_size, DIR_NEW, output_dir, agg_mode, template, max_length,l1_voc, l1_emb, l2_voc, l2_emb, DIR_TRAIN_DICT, DIR_TEST_DICT, lambda_, model_dir))
 

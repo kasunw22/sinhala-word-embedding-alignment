@@ -164,6 +164,18 @@ def valid_BLI(train_data_l1, train_data_l2, src2tgt, lexicon_size_s2t, tgt2src, 
     return (BLI_accuracy_l12l2, BLI_accuracy_l22l1) 
  
 
+def not_ASCII(word):
+    is_ascii = [ord(x)<256 for x in word]
+
+    if all(is_ascii):
+        return False
+
+    return True
+
+
+prunables = ["si", "zh", "ru", "ta", "ja"]
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='C1 EVALUATION')
 
@@ -187,6 +199,8 @@ if __name__ == '__main__':
                     help="test dict directory")
     parser.add_argument("--top_k", type=int, default=1,
                     help="top-k retrieval accuracy")
+    parser.add_argument('--prune_ascii', action='store_true', 
+                    help='Remove ASCII entries from Non-English alphebets')
 
     args, remaining_args = parser.parse_known_args()
     assert remaining_args == []
@@ -204,6 +218,30 @@ if __name__ == '__main__':
     l2_voc = np.load(l2_voc_path, allow_pickle=True).item()
     l1_emb = torch.load(l1_emb_path)
     l2_emb = torch.load(l2_emb_path)
+    
+    print(f"[INFO] Original embeddings size {args.l1}: {l1_emb.shape} -- {len(l1_voc)}")
+    if args.prune_ascii and args.l1 in prunables:
+        print("[INFO] Pruning the vocabulary by removing ASCII entries...")
+        words_src = list(l1_voc.keys())
+        prune_idx = list(map(not_ASCII, words_src))
+        l1_emb = l1_emb[prune_idx]
+        # l1_voc = dict(np.array(list(l1_voc.items()))[prune_idx])
+        words = np.array(list(l1_voc))[prune_idx]
+        l1_voc = {words[i]: i for i in range(len(words))}
+
+        print(f"[INFO] After pruning embeddings size {args.l1}: {l1_emb.shape} -- {len(l1_voc)}")
+        
+    print(f"[INFO] Original embeddings size {args.l2}: {l2_emb.shape} -- {len(l2_voc)}")
+    if args.prune_ascii and args.l2 in prunables:
+        print("[INFO] Pruning the vocabulary by removing ASCII entries...")
+        words_tgt = list(l2_voc.keys())
+        prune_idx = list(map(not_ASCII, words_tgt))
+        l2_emb = l2_emb[prune_idx]
+        # l2_voc = dict(np.array(list(l2_voc.items()))[prune_idx])
+        words = np.array(list(l2_voc))[prune_idx]
+        l2_voc = {words[i]: i for i in range(len(words))}
+
+        print(f"[INFO] After pruning embeddings size {args.l2}: {l2_emb.shape} -- {len(l2_voc)}")
 
     l1_emb = l1_emb / (torch.norm(l1_emb, dim=1, keepdim=True) + 1e-9 )
     l2_emb = l2_emb / (torch.norm(l2_emb, dim=1, keepdim=True) + 1e-9 )

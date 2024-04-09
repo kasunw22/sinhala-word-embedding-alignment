@@ -205,6 +205,18 @@ def list_of_ints(arg):
     return list(map(int, arg.split(',')))
 
 
+def not_ASCII(word):
+    is_ascii = [ord(x)<256 for x in word]
+
+    if all(is_ascii):
+        return False
+
+    return True
+
+
+prunables = ["si", "zh", "ru", "ta", "ja"]
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='C2 EVALUATION')
 
@@ -239,6 +251,8 @@ if __name__ == '__main__':
                     help="model name")
     parser.add_argument("--top_k", type=list_of_ints, default=[1,5,10],
                     help="top-k retrieval accuracy")
+    parser.add_argument('--prune_ascii', action='store_true', 
+                        help='Remove ASCII entries from Non-English alphebets')
 
     args, remaining_args = parser.parse_known_args()
     assert remaining_args == []
@@ -273,6 +287,30 @@ if __name__ == '__main__':
 
     feature_size = l1_emb.size(1) 
     print("feature_size: ",feature_size)
+    
+    print(f"[INFO] Original embeddings size {args.l1}: {l1_emb.shape} -- {len(l1_voc)}")
+    if args.prune_ascii and args.l1 in prunables:
+        print("[INFO] Pruning the vocabulary by removing ASCII entries...")
+        words_src = list(l1_voc.keys())
+        prune_idx = list(map(not_ASCII, words_src))
+        l1_emb = l1_emb[prune_idx]
+        # l1_voc = dict(np.array(list(l1_voc.items()))[prune_idx])
+        words = np.array(list(l1_voc))[prune_idx]
+        l1_voc = {words[i]: i for i in range(len(words))}
+
+        print(f"[INFO] After pruning embeddings size {args.l1}: {l1_emb.shape} -- {len(l1_voc)}")
+        
+    print(f"[INFO] Original embeddings size {args.l2}: {l2_emb.shape} -- {len(l2_voc)}")
+    if args.prune_ascii and args.l2 in prunables:
+        print("[INFO] Pruning the vocabulary by removing ASCII entries...")
+        words_tgt = list(l2_voc.keys())
+        prune_idx = list(map(not_ASCII, words_tgt))
+        l2_emb = l2_emb[prune_idx]
+        # l2_voc = dict(np.array(list(l2_voc.items()))[prune_idx])
+        words = np.array(list(l2_voc))[prune_idx]
+        l2_voc = {words[i]: i for i in range(len(words))}
+
+        print(f"[INFO] After pruning embeddings size {args.l2}: {l2_emb.shape} -- {len(l2_voc)}")
 
     l1_emb = l1_emb / (torch.norm(l1_emb, dim=1, keepdim=True) + 1e-9 )
     l2_emb = l2_emb / (torch.norm(l2_emb, dim=1, keepdim=True) + 1e-9 )
@@ -291,10 +329,11 @@ if __name__ == '__main__':
             _, l1_words, l2_words = line.split("|+|")
             l1_word = l1_words.split()[0]
             l2_word = l2_words.split()[0]
-            words_l1.append(l1_word)
-            words_l2.append(l2_word)
-            ids_l1.append(l1_voc[l1_word])
-            ids_l2.append(l2_voc[l2_word])
+            if l1_word in l1_voc and l2_word in l2_voc:
+                words_l1.append(l1_word)
+                words_l2.append(l2_word)
+                ids_l1.append(l1_voc[l1_word])
+                ids_l2.append(l2_voc[l2_word])
 
 
 

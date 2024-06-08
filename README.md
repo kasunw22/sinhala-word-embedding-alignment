@@ -17,6 +17,10 @@ This repository contains the resources related to our research on English-Sinhal
 ### Comparison of Sinhala-English alignment with other language pairs according to the paper:
 ![Model](./alignment-results-comparison.png)
 
+## Next Work
+
+### Alignment results obtained for Sinhala-English alignment from further studies (publication is under review):
+![Model](./en-si-alignment-results-all.png)
 
 ## Publications
 If you are willing to use this work, please be kind enough to cite the following papers.

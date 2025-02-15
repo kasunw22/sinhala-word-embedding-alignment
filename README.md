@@ -9,7 +9,7 @@ This repository contains the resources related to our research on English-Sinhal
 - **vecmap_content/** contains the scripts used for ***VecMap*** alignment which have been adopted from [the VecMap](https://github.com/artetxem/vecmap/tree/master) repository.
 - **contrastive_bli_content/** contains the scripts used for ***ContranstiveBLI*** alignment which have been adopted from [the ContranstiveBLI](https://github.com/cambridgeltl/ContrastiveBLI/tree/main) repository.
 
-## Results from the Paper
+## Results from the Papers
 
 ### Alignment results obtained for Sinhala-English alignment according to the paper:
 ![Model](./en-si-alignment-results.png)

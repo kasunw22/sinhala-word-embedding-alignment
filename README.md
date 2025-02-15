@@ -12,15 +12,24 @@ This repository contains the resources related to our research on English-Sinhal
 ## Results from the Papers
 
 ### Alignment results obtained for Sinhala-English alignment according to the paper:
-![Model](./en-si-alignment-results.png)
+![Model](./images/en-si-alignment-results.png)
 
 ### Comparison of Sinhala-English alignment with other language pairs according to the paper:
-![Model](./alignment-results-comparison.png)
+![Model](./images/alignment-results-comparison.png)
 
 ## Next Work
 
 ### Alignment results obtained for Sinhala-English alignment from further studies (publication is under review):
-![Model](./en-si-alignment-results-all.png)
+![Model](./images/en-si-alignment-results-all.png)
+
+### Studies on BLI (under review):
+#### Impact of Language Inflection on BLI
+![Model](./images/impact-of-inflections.png)
+![Model](./images/stem-based-bli-improvements.png)
+
+#### Impact of multilinguality on BLI
+![Model](./images/impact-of-multilinguality.png)
+![Model](./images/vocabulary-pruning-improvements.png)
 
 ## Publications
 If you are willing to use this work, please be kind enough to cite the following papers.
@@ -65,4 +74,9 @@ If you are willing to use this work, please be kind enough to cite the following
     url = "https://aclanthology.org/2023.paclic-1.42",
     pages = "424--435",
 }
+```
+
+### [BLI paper](https://github.com/kasunw22/sinhala-word-embedding-alignment): 
+```
+under review
 ```

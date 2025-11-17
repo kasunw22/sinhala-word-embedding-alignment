@@ -78,5 +78,23 @@ If you are willing to use this work, please be kind enough to cite the following
 
 ### [BLI paper](https://github.com/kasunw22/sinhala-word-embedding-alignment): 
 ```
-under review
+@InProceedings{10.1007/978-3-032-10202-7_26,
+author="Wickramasinghe, Kasun
+and de Silva, Nisansa",
+editor="Nguyen, Ngoc Thanh
+and Dinh Duc Anh, Vu
+and Kozierkiewicz, Adrianna
+and Nguyen Van, Sinh
+and Nunez, Manuel
+and Treur, Jan
+and Vossen, Gottfried",
+title="How Good is BLI as an Alignment Measure: A Study in Word Embedding Paradigm",
+booktitle="Advances in Computational Collective Intelligence",
+year="2026",
+publisher="Springer Nature Switzerland",
+address="Cham",
+pages="383--397",
+abstract="Sans a dwindling number of monolingual embedding studies originating predominantly from the low-resource domains, it is evident that multilingual embedding has become the de facto choice due to its adaptability to the usage of code-mixed languages, granting the ability to process multilingual documents in a language-agnostic manner, as well as removing the difficult task of aligning monolingual embeddings. But is this victory complete? Are the multilingual models better than aligned monolingual models in every aspect? Can the higher computational cost of multilingual models always be justified? Or is there a compromise between the two extremes? Bilingual Lexicon Induction (BLI) is one of the most widely used metrics in terms of evaluating the degree of alignment between two embedding spaces. In this study, we explore the strengths and limitations of BLI as a measure to evaluate the degree of alignment of two embedding spaces. Further, we evaluate how well traditional embedding alignment techniques, novel multilingual models, and combined alignment techniques perform BLI tasks in the contexts of both high-resource and low-resource languages. In addition to that, we investigate the impact of the language families to which the pairs of languages belong. We identify that BLI does not measure the true degree of alignment in some cases and we propose solutions for them. We propose a novel stem-based BLI approach to evaluate two aligned embedding spaces that take into account the inflected nature of languages as opposed to the prevalent word-based BLI techniques. Further, we introduce a vocabulary pruning technique that is more informative in showing the degree of the alignment, especially performing BLI on multilingual embedding models. In addition to that, we find that in most cases, combined embedding alignment techniques that make use of both traditional alignment and multilingual embeddings perform better while for certain scenarios multilingual embeddings perform better (especially low-resource language cases). The traditional aligned embeddings lag behind the other two types of aligned embeddings in the majority of the cases.",
+isbn="978-3-032-10202-7"
+}
 ```

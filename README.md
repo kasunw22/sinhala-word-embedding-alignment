@@ -76,7 +76,7 @@ If you are willing to use this work, please be kind enough to cite the following
 }
 ```
 
-### [BLI paper](https://github.com/kasunw22/sinhala-word-embedding-alignment): 
+### [BLI paper](https://link.springer.com/chapter/10.1007/978-3-032-10202-7_26): 
 ```
 @InProceedings{10.1007/978-3-032-10202-7_26,
 author="Wickramasinghe, Kasun
